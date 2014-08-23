@@ -3,11 +3,15 @@ guid: 2918a5ee7e1f8df4ab047ae3dab29d81
 TextureImporter:
   fileIDToRecycleName:
     21300000: tiles
-    21300002: tiles_0
-    21300004: tiles_1
-    21300006: tiles_2
-    21300008: tiles_3
-    21300010: tiles_4
+    21300002: GreenTile
+    21300004: RedTile
+    21300006: YellowTile
+    21300008: BlueTile
+    21300010: OrangeTile
+    21300012: Smoke1
+    21300014: Smoke2
+    21300016: Smoke3
+    21300018: Smoke4
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -49,7 +53,7 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: tiles_0
+    - name: GreenTile
       rect:
         serializedVersion: 2
         x: 0
@@ -57,9 +61,9 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: tiles_1
+    - name: RedTile
       rect:
         serializedVersion: 2
         x: 64
@@ -67,9 +71,9 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: tiles_2
+    - name: YellowTile
       rect:
         serializedVersion: 2
         x: 128
@@ -77,9 +81,9 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: tiles_3
+    - name: BlueTile
       rect:
         serializedVersion: 2
         x: 192
@@ -87,9 +91,9 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: tiles_4
+    - name: OrangeTile
       rect:
         serializedVersion: 2
         x: 256
@@ -97,7 +101,47 @@ TextureImporter:
         width: 64
         height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Smoke1
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Smoke2
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Smoke3
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Smoke4
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

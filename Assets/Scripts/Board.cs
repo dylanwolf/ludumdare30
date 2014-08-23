@@ -14,6 +14,8 @@ public class Board : MonoBehaviour {
 	public Sprite[] Textures;
 	public GameTile TilePrefab;
 
+	public Transform SmokePuffPrefab;
+
 	public static GameTile[,] Tiles1 = new GameTile[BoardSize, BoardSize];
 	public static GameTile[,] Tiles2 = new GameTile[BoardSize, BoardSize];
 
@@ -30,6 +32,27 @@ public class Board : MonoBehaviour {
 		// Test code
 		GenerateBoard();
 
+	}
+
+	private static float timer;
+	private const float DisappearTimer = 0.667f;
+	void Update()
+	{
+		if (GameState.Mode == GameState.GameMode.Disappearing)
+		{
+			timer -= Time.deltaTime;
+			if (timer <= 0)
+			{
+				GameState.Mode = GameState.GameMode.Playing;
+				SettleBlocks(Tiles1);
+				SettleBlocks(Tiles2);
+			}
+		}
+		if (GameState.Mode == GameState.GameMode.Falling && fallingBlocks.Count == 0)
+		{
+			GameState.Mode = GameState.GameMode.Playing;
+			MatchAndClear(ShowingBoard2 ? Tiles2 : Tiles1);
+		}
 	}
 
 	private Vector3 mouseClick;
@@ -59,7 +82,7 @@ public class Board : MonoBehaviour {
 		Tiles2[x,y].transform.parent = _t;
 		Tiles2[x, y].ToggleVisibility(ShowingBoard2);
 
-		UpdatePositions();
+		UpdateIndexes(true);
 		SettleBlocks(Tiles1);
 		SettleBlocks(Tiles2);
 		GenerateNextTile();
@@ -85,7 +108,7 @@ public class Board : MonoBehaviour {
 		}
 
 		GenerateNextTile();
-		UpdatePositions();
+		UpdateIndexes(true);
 		MatchAndClear(Tiles1);
 	}
 
@@ -118,7 +141,7 @@ public class Board : MonoBehaviour {
 		}
 	}
 
-	public static void UpdatePositions()
+	public static void UpdateIndexes(bool updatePositions)
 	{
 		for (int y = 0; y < BoardSize; y++)
 		{
@@ -128,11 +151,15 @@ public class Board : MonoBehaviour {
 				{
 					Tiles1[x, y].Row = y;
 					Tiles1[x, y].Column = x;
+					if (updatePositions)
+						Tiles1[x, y].UpdatePosition();
 				}
 				if (Tiles2[x,y] != null)
 				{
 					Tiles2[x, y].Row = y;
 					Tiles2[x, y].Column = x;
+					if (updatePositions)
+						Tiles2[x, y].UpdatePosition();
 				}
 			}
 		}
@@ -149,8 +176,13 @@ public class Board : MonoBehaviour {
 		}
 	}
 
+	static Vector3 tmpPos;
 	static void ClearTile(int x, int y)
 	{
+		tmpPos.x = (x * Board.TileSize) - WorldOffset;
+		tmpPos.y = (y * Board.TileSize) - WorldOffset;
+		Instantiate (Current.SmokePuffPrefab, tmpPos, Quaternion.identity);
+
 		if (Tiles1[x, y] != null)
 		{
 			DestroyImmediate(Tiles1[x, y].gameObject);
@@ -172,59 +204,55 @@ public class Board : MonoBehaviour {
 		// If showing board 2, board 1 should have the clicked tile, and board 2 should have the hidden tile
 		// If showing board 1, board 2 should have the clicked tile, and board 1 should have the hidden tile
 
-		Debug.Log (string.Format("Swapping at {0}, {1}", tile.Column, tile.Row));
-
 		Tiles1[tile.Column, tile.Row] = ShowingBoard2 ? tile : tmpTile;
 		Tiles2[tile.Column, tile.Row] = ShowingBoard2 ? tmpTile : tile;
 
 		tile.ToggleVisibility(false);
 		tmpTile.ToggleVisibility(true);
 
-		UpdatePositions();
+		UpdateIndexes(true);
 		MatchAndClear(ShowingBoard2 ? Tiles2 : Tiles1);
 	}
 
 	static bool clearedTiles = false;
 	public static void MatchAndClear(GameTile[,] board)
 	{
-		clearedTiles = true;
-		while (clearedTiles)
+		clearedTiles = false;
+		// Make a copy of the board to test
+		CopyBoard(board, toTest);
+		currentTile = null;
+		collector.Clear ();
+
+		for (int y = 0; y < BoardSize; y++)
 		{
-			clearedTiles = false;
-			// Make a copy of the board to test
-			CopyBoard(board, toTest);
-			currentTile = null;
-			collector.Clear ();
-
-			for (int y = 0; y < BoardSize; y++)
+			for (int x = 0; x < BoardSize; x++)
 			{
-				for (int x = 0; x < BoardSize; x++)
+				TestTile (x, y);
+				if (collector.Count >= 3)
 				{
-					TestTile (x, y);
-					if (collector.Count >= 3)
+					foreach (GameTile tile in collector)
 					{
-						foreach (GameTile tile in collector)
-						{
-							ClearTile(tile.Column, tile.Row);
-							clearedTiles = true;
-						}
+						ClearTile(tile.Column, tile.Row);
+						clearedTiles = true;
 					}
-					currentTile = null;
-					collector.Clear ();
 				}
+				currentTile = null;
+				collector.Clear ();
 			}
+		}
 
-			if (clearedTiles)
-			{
-				SettleBlocks(Tiles1);
-				SettleBlocks(Tiles2);
-			}
+		if (clearedTiles)
+		{
+			timer = DisappearTimer;
+			GameState.Mode = GameState.GameMode.Disappearing;
 		}
 	}
 
 	static int? firstEmpty;
+	public static List<GameTile> fallingBlocks = new List<GameTile>();
 	public static void SettleBlocks(GameTile[,] board)
 	{
+		fallingBlocks.Clear ();
 		for (int x = 0; x < BoardSize; x++)
 		{
 			firstEmpty = null;
@@ -236,13 +264,21 @@ public class Board : MonoBehaviour {
 				}
 				else if (firstEmpty.HasValue && board[x, y] != null)
 				{
+					board[x, y].LastRow = y;
+					fallingBlocks.Add(board[x, y]);
 					board[x, firstEmpty.Value] = board[x, y];
 					board[x, y] = null;
 					firstEmpty++;
 				}
 			}
 		}
-		UpdatePositions();
+
+		if (fallingBlocks.Count > 0)
+		{
+			GameState.Mode = GameState.GameMode.Falling;
+		}
+
+		UpdateIndexes(false);
 	}
 
 	static void TestTile(int x, int y)
