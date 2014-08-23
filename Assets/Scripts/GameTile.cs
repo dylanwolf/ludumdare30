@@ -40,6 +40,7 @@ public class GameTile : MonoBehaviour {
 			{
 				Board.fallingBlocks.Remove(this);
 				UpdatePosition();
+				Soundboard.PlayDrop();
 			}
 			else
 			{
@@ -52,8 +53,8 @@ public class GameTile : MonoBehaviour {
 	{
 		if (GameState.Mode == GameState.GameMode.Playing)
 		{
-			Debug.Log ("Flipping tile");
 			Board.FlipTile(this);
+			Soundboard.PlayFlip();
 		}
 	}
 

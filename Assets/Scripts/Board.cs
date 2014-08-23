@@ -60,10 +60,14 @@ public class Board : MonoBehaviour {
 	private int mouseY;
 	void OnMouseDown()
 	{
-		mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-		mouseX = (int)Mathf.Round ((mouseClick.x + WorldOffset) / TileSize);
-		mouseY = (int)Mathf.Round ((mouseClick.y + WorldOffset) / TileSize);
-		PutNextTile(mouseX, mouseY);
+		if (GameState.Mode == GameState.GameMode.Playing)
+		{
+			mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			mouseX = (int)Mathf.Round ((mouseClick.x + WorldOffset) / TileSize);
+			mouseY = (int)Mathf.Round ((mouseClick.y + WorldOffset) / TileSize);
+			PutNextTile(mouseX, mouseY);
+			Soundboard.PlayDrop();
+		}
 	}
 
 	static GameTile currentTile;
@@ -86,7 +90,11 @@ public class Board : MonoBehaviour {
 		SettleBlocks(Tiles1);
 		SettleBlocks(Tiles2);
 		GenerateNextTile();
-		MatchAndClear(ShowingBoard2 ? Tiles2 : Tiles1);
+		// Match and clear if we didn't have to drop this block
+		if (GameState.Mode == GameState.GameMode.Playing)
+		{
+			MatchAndClear(ShowingBoard2 ? Tiles2 : Tiles1);
+		}
 	}
 
 	public static void GenerateBoard()
@@ -234,6 +242,7 @@ public class Board : MonoBehaviour {
 					{
 						ClearTile(tile.Column, tile.Row);
 						clearedTiles = true;
+						Soundboard.PlayClear();
 					}
 				}
 				currentTile = null;
