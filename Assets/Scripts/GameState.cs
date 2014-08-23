@@ -5,7 +5,9 @@ public static class GameState {
 
 	public enum GameMode
 	{
-		Playing
+		Playing,
+		Disappearing,
+		Falling
 	}
 
 	public static GameMode Mode = GameMode.Playing;
