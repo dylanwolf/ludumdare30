@@ -1,0 +1,20 @@
+# use glob syntax.
+syntax: glob
+
+Library/*
+obj
+Temp/*
+*.csproj
+*.sln
+*.suo
+Assets/Thinkscroller/*
+Assets/TK2DROOT/*
+*.aup
+*.aup.meta
+*.au
+*.au.meta
+*/e00
+*/e00.meta
+*/d00.meta
+
+LD29.userprefs
