@@ -67,6 +67,7 @@ public class Board : MonoBehaviour {
 			mouseY = (int)Mathf.Round ((mouseClick.y + WorldOffset) / TileSize);
 			PutNextTile(mouseX, mouseY);
 			Soundboard.PlayDrop();
+			GameState.ActionsTaken++;
 		}
 	}
 
@@ -100,30 +101,68 @@ public class Board : MonoBehaviour {
 	public static void GenerateBoard()
 	{
 		ShowingBoard2 = false;
-		for (int y = 0; y < GenerateRows; y++)
+		for (int y = 0; y < BoardSize; y++)
 		{
 			for (int x = 0; x < BoardSize; x++)
 			{
-				Tiles1[x, y] = (GameTile)Instantiate(Current.TilePrefab);
-				Tiles1[x,y].transform.parent = _t;
-				Tiles1[x, y].TileColor = (int)Random.Range(0, Current.Textures.Length);
+				if (Tiles1[x, y] != null)
+					DestroyImmediate(Tiles1[x,y].gameObject);
+				if (Tiles2[x, y] != null)
+					DestroyImmediate(Tiles2[x,y].gameObject);
 
-				Tiles2[x, y] = (GameTile)Instantiate(Current.TilePrefab);
-				Tiles2[x, y].TileColor = (int)Random.Range(0, Current.Textures.Length);
-				Tiles2[x,y].transform.parent = _t;
-				Tiles2[x, y].ToggleVisibility(false);
+				if (y < GenerateRows)
+				{
+					Tiles1[x, y] = (GameTile)Instantiate(Current.TilePrefab);
+					Tiles1[x,y].transform.parent = _t;
+
+					Tiles1[x, y].TileColor = (int)Random.Range(0, Current.Textures.Length);
+					while ((x > 0 && Tiles1[x, y].TileColor == Tiles1[x - 1,y].TileColor) ||
+					       (y > 0 && Tiles1[x, y].TileColor == Tiles1[x,y - 1].TileColor))
+					{
+						Tiles1[x, y].TileColor = (int)Random.Range(0, Current.Textures.Length);
+					}
+
+
+					Tiles2[x, y] = (GameTile)Instantiate(Current.TilePrefab);
+					Tiles2[x, y].TileColor = (int)Random.Range(0, Current.Textures.Length);
+					while ((x > 0 && Tiles2[x, y].TileColor == Tiles2[x - 1,y].TileColor) ||
+					       (y > 0 && Tiles2[x, y].TileColor == Tiles2[x,y - 1].TileColor))
+					{
+						Tiles2[x, y].TileColor = (int)Random.Range(0, Current.Textures.Length);
+					}
+
+					Tiles2[x,y].transform.parent = _t;
+					Tiles2[x, y].ToggleVisibility(false);
+				}
 			}
 		}
 
 		GenerateNextTile();
 		UpdateIndexes(true);
-		MatchAndClear(Tiles1);
+	}
+
+	static List<int> availableTiles = new List<int>();
+	static int GetRandomTileFromExisting()
+	{
+		availableTiles.Clear ();
+		for (int x = 0; x < BoardSize; x++)
+		{
+			for (int y = 0; y < BoardSize; y++)
+			{
+				if (Tiles1[x, y] != null && !availableTiles.Contains (Tiles1[x, y].TileColor))
+					availableTiles.Add(Tiles1[x, y].TileColor);
+				if (Tiles2[x, y] != null && !availableTiles.Contains (Tiles2[x, y].TileColor))
+					availableTiles.Add(Tiles2[x, y].TileColor);
+			}
+		}
+
+		return availableTiles[(int)Random.Range (0, availableTiles.Count)];
 	}
 
 	public static void GenerateNextTile()
 	{
-		NextTile1 = (int)Random.Range(0, Current.Textures.Length);
-		NextTile2 = (int)Random.Range(0, Current.Textures.Length);
+		NextTile1 = GetRandomTileFromExisting();
+		NextTile2 = GetRandomTileFromExisting();
 	}
 
 	public static bool ShowingBoard2 = false;

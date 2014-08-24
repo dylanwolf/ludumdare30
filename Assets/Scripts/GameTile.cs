@@ -55,6 +55,7 @@ public class GameTile : MonoBehaviour {
 		{
 			Board.FlipTile(this);
 			Soundboard.PlayFlip();
+			GameState.ActionsTaken++;
 		}
 	}
 

@@ -1,9 +1,14 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Soundboard.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ActionsLabel.cs">
     <Files>
-      <File FileName="Assets\Scripts\Soundboard.cs" Line="8" Column="18" />
+      <File FileName="Assets\Scripts\FlipButton.cs" Line="6" Column="1" />
+      <File FileName="Assets\Scripts\Soundboard.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\GameTile.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Board.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\GameState.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\RestartButton.cs" Line="10" Column="26" />
+      <File FileName="Assets\Scripts\ActionsLabel.cs" Line="20" Column="41" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
