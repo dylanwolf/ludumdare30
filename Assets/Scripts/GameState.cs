@@ -12,4 +12,15 @@ public static class GameState {
 
 	public static GameMode Mode = GameMode.Playing;
 
+	public static int ActionsTaken = 0;
+
+	public static void ResetGame()
+	{
+		if (Mode == GameMode.Playing)
+		{
+			ActionsTaken = 0;
+			Board.ShowingBoard2 = true;
+			Board.GenerateBoard();
+		}
+	}
 }
