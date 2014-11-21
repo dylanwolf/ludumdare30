@@ -51,6 +51,7 @@ public class GameTile : MonoBehaviour {
 
 	void OnMouseDown()
 	{
+        Board.ClickCaught = true;
 		if (GameState.Mode == GameState.GameMode.Playing)
 		{
 			Board.FlipTile(this);

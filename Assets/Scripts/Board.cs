@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Board : MonoBehaviour {
 
+    public static bool ClickCaught = false;
+
 	public const int BoardSize = 7;
 	public const int GenerateRows = 4;
 	public const float WorldOffset = 1.92f;
@@ -60,7 +62,7 @@ public class Board : MonoBehaviour {
 	private int mouseY;
 	void OnMouseDown()
 	{
-		if (GameState.Mode == GameState.GameMode.Playing)
+		if (GameState.Mode == GameState.GameMode.Playing && !ClickCaught)
 		{
 			mouseClick = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			mouseX = (int)Mathf.Round ((mouseClick.x + WorldOffset) / TileSize);
@@ -70,6 +72,11 @@ public class Board : MonoBehaviour {
 			GameState.ActionsTaken++;
 		}
 	}
+
+    void OnMouseUp()
+    {
+        Board.ClickCaught = false;
+    }
 
 	static GameTile currentTile;
 	static List<GameTile> collector = new List<GameTile>();
